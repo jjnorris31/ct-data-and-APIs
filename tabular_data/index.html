@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>tabular_data</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+</head>
+<body>
+<canvas id="myChart" width="800" height="400"></canvas>
+<script>
+    let table;
+
+    /**
+     * Obtiene los datos del CSV y los procesa
+     */
+    async function getData() {
+        let years = [];
+        let temps = [];
+
+        const response = await fetch('ZonAnn.Ts+dSST.csv');
+        const data = await response.text();
+        table = data.split('\n').slice(1);
+        const words = [];
+        table.forEach(row => {
+            const cols = row.split(',');
+            if (cols[0] !== undefined && cols[1] !== undefined) {
+                years.push(cols[0]);
+                temps.push(parseFloat(cols[1]) + 14);
+            }
+        });
+        return {years, temps};
+    }
+
+    /**
+     * Crea la grafica de líneas
+     * @returns {Promise<void>}
+     */
+    async function plotLineChart() {
+        const data = await getData(); // crea una función asíncrona para poder llamar a otra función asíncrona
+        var ctx = document.getElementById('myChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.years,
+                datasets: [{
+                    label: 'Combined Land-Surface Air and Sea-Surface Water Temperature in C°',
+                    data: data.temps,
+                }]
+            },
+        });
+    }
+    plotLineChart();
+</script>
+
+</body>
+</html>
