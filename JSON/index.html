@@ -1,0 +1,36 @@
+<!doctype html>
+<html class="no-js" lang="">
+<head>
+  <meta charset="utf-8">
+  <title>fetch basics</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <h1>Where is the ISS?</h1>
+    <p>
+        latitude: <span id="lat"></span>
+    </p>
+    <p>
+        longitude: <span id="log"></span>
+    </p>
+
+  <script>
+      const api_url = 'https://api.wheretheiss.at/v1/satellites/25544'
+      async function getISS() {
+          const response = await fetch(api_url);
+          const data = await response.json();
+          // obtiene las propiedades de data con el mismo
+          //nombre
+          let { latitude, longitude } = data;
+          console.log(latitude);
+          console.log(longitude);
+          document.getElementById('lat').textContent = latitude;
+          document.getElementById('log').textContent = longitude;
+      }
+
+      getISS();
+  </script>
+</body>
+</html>
