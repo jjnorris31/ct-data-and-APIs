@@ -1,6 +1,13 @@
 <!doctype html>
 <html class="no-js" lang="">
 <head>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
+    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+    crossorigin=""/>
+     <!-- Make sure you put this AFTER Leaflet's CSS -->
+ <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js"
+ integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og=="
+ crossorigin=""></script>
   <meta charset="utf-8">
   <title>fetch basics</title>
   <meta name="description" content="">
@@ -10,27 +17,49 @@
 <body>
     <h1>Where is the ISS?</h1>
     <p>
-        latitude: <span id="lat"></span>
+        latitude: <span id="lat"></span>°
     </p>
     <p>
-        longitude: <span id="log"></span>
+        longitude: <span id="log"></span>°
     </p>
-
+    <div style="height: 180px" id="mapid"></div>
   <script>
+      // making a map
+      const mymap = L.map('mapid').setView([0, 0], 1);
+      const greenIcon = L.icon({
+          iconUrl: 'sat.png',
+          iconSize: [38, 38]
+      })
+      const marker = L.marker([0, 0], {icon: greenIcon}).addTo(mymap);
+      L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoiampub3JyaXMzMSIsImEiOiJjazJleTlhc3AwOGt3M2Nud3UyYzB6dmR3In0.K33d_8peu-AWPMiJwh8vdw', {
+	    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+	    maxZoom: 15,
+	    id: 'mapbox.streets',
+	    accessToken: 'pk.eyJ1Ijoiampub3JyaXMzMSIsImEiOiJjazJleTlhc3AwOGt3M2Nud3UyYzB6dmR3In0.K33d_8peu-AWPMiJwh8vdw'
+      }).addTo(mymap);
+      
+      const tileUrl = 'https://www.openstreetmap.org/copyright'
       const api_url = 'https://api.wheretheiss.at/v1/satellites/25544'
+     
+      let firstTime = true;
+
       async function getISS() {
           const response = await fetch(api_url);
           const data = await response.json();
           // obtiene las propiedades de data con el mismo
           //nombre
           let { latitude, longitude } = data;
+          marker.setLatLng([latitude, longitude]);
           console.log(latitude);
           console.log(longitude);
-          document.getElementById('lat').textContent = latitude;
-          document.getElementById('log').textContent = longitude;
+
+          document.getElementById('lat').textContent = latitude.toFixed(2);
+          document.getElementById('log').textContent = longitude.toFixed(2);
       }
 
       getISS();
+
+      setInterval(getISS, 1000);
   </script>
 </body>
 </html>
