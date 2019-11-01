@@ -1,0 +1,48 @@
+<html>
+    <head>
+    </head>
+    <body>
+        <h1>Data selfie app</h1>
+        <p>Hello!</p>
+        <p>latitude: <span id="lat">°</span></p>
+        <p>longitud: <span id="lon">°</span></p>
+        <p><a href="contact.html">Contact</a></p>
+        <input type="text" id="tin">
+        <button id="submit">submit</button>
+        <script>
+            if ('geolocation' in navigator) {
+                console.log('geolocation available');
+            } else {
+                console.log('g not available');
+            }
+
+            navigator.geolocation.getCurrentPosition( async position => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                document.getElementById('lat').textContent = lat;
+                document.getElementById('lon').textContent = lon;
+
+                console.log(lat);
+                console.log(lon);
+
+                document.getElementById("submit").addEventListener("click", async () => {
+                    const fruit = document.getElementById('tin').value;
+                    const data = {lat, lon, fruit};
+                    const options = {
+                        method: 'POST',
+                        body: JSON.stringify(data),
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    }
+
+                    const response = await fetch('/api', options);
+                    const json = await response.json();
+                    document.getElementById('tin').value = "";
+                    console.log(json);
+                });
+
+            });        
+        </script>
+    </body>
+</html>
