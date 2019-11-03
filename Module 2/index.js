@@ -3,7 +3,7 @@ const Datastore = require('nedb');
 
 const app = express();
 
-app.listen(8000, () => {
+app.listen(3000, () => {
     console.log('listening at 3000');
 });
 
@@ -13,6 +13,7 @@ database.loadDatabase(); // cargando la base de datos de NeDB
 app.use(express.static('public')); // añadiendo la capacidad de manejar archivos estáticos
 app.use(express.json('1mb')); // añadiendo la capacidad de utilizar el formato JSON
 
+// indicando que se va a enviar cierta información para crear un recurso
 app.post('/api', (request, response) => {
     console.log('I got a request!');
     console.log(request.body);
@@ -28,3 +29,14 @@ app.post('/api', (request, response) => {
         longitude: request.body.lon
     });
 });
+
+app.get('/api', (request, response) => {
+    database.find({}, (err, data) => {
+        if (err) {
+            response.end();
+            return;
+        }
+    
+        response.json(data);
+    })
+})
